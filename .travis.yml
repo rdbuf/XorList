@@ -1,0 +1,16 @@
+language: cpp
+compiler: clang
+os: linux
+dist: trusty
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-5.0
+    packages:
+      - clang-5.0
+      - libc++1
+      - libc++abi1
+script: 
+  - mkdir build && cd build
+  - cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" ..
+  - make VERBOSE=1 && ./tests/run
