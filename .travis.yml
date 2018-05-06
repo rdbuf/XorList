@@ -1,16 +1,33 @@
-language: cpp
-compiler: clang
+language: generic
 os: linux
 dist: trusty
-addons:
-  apt:
-    sources:
-      - llvm-toolchain-trusty-5.0
-    packages:
-      - clang-5.0
-      - libc++1
-      - libc++abi1
+matrix:
+  include:
+    - env:
+      - CC=clang-5.0
+      - CXX=clang++-5.0
+      - CPATH="/usr/local/clang-5.0.0/include/c++/v1"
+      - LD_LIBRARY_PATH="/usr/local/clang-5.0.0/lib"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libc++1
+            - libc++-dev
+            - libc++abi1
+            - llvm-5.0-tools
+      after_success:
+        - ./tests/coverage.sh
+    - env: CC=gcc-7 CXX=g++-7
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
 script: 
   - mkdir build && cd build
-  - cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" ..
-  - make VERBOSE=1 && ./tests/run
+  - cmake .. && make
+  - ./tests/run
