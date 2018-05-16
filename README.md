@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/rdbuf/XorList.svg?branch=master)](https://travis-ci.org/rdbuf/XorList)
+[![Header](https://img.shields.io/badge/single%20header-master-blue.svg)](https://github.com/rdbuf/XorList/blob/master/include/XorList.hpp)
 
 XOR linked list: [wikipedia](https://en.wikipedia.org/wiki/XOR_linked_list).
 
