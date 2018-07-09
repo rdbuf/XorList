@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "XorList.hpp"
+#include "StackAllocator.hpp"
 
 #include <list>
 #include <type_traits>
