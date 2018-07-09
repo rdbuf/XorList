@@ -16,8 +16,8 @@ template<class Ptr, int Id>
 Ptr result = nullptr;
 template<class Ptr, Ptr Target, int Id>
 struct apply {
-    struct exec { exec() { result<Ptr, Id> = Target; } };
-    static exec var;
+	struct exec { exec() { result<Ptr, Id> = Target; } };
+	static exec var;
 };
 template<typename Ptr, Ptr Target, int Id>
 typename apply<Ptr, Target, Id>::exec apply<Ptr, Target, Id>::var;
@@ -262,7 +262,7 @@ TEST(XorList, OperationalCorrectness) {
 	uniform_int_distribution<> op(0, 4);
 	uniform_int_distribution<> value;
 	const size_t test_length = uniform_int_distribution<>(1e4, 1e4 * 2)(gen);
-	
+
 	XorList<int, StackAllocator<int>> l;
 	std::list<int> k;
 
@@ -278,11 +278,11 @@ TEST(XorList, OperationalCorrectness) {
 			const int val = value(gen);
 			l.push_back(val);
 			k.push_back(val);
-		       	break; 
+			break;
 		}
 		case 2: {
 			if (l.size()) { l.pop_back(); k.pop_back(); }
-			break; 
+			break;
 		}
 		case 3: {
 			const int val = value(gen);

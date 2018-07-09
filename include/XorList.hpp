@@ -17,7 +17,7 @@ struct Node {
 	T data;
 
 	template<class U>
-	explicit Node(U&& data, Node* left, Node* right) 
+	explicit Node(U&& data, Node* left, Node* right)
 		: xor_(reinterpret_cast<uintptr_t>(left) ^ reinterpret_cast<uintptr_t>(right))
 		, data(std::forward<U>(data)) {}
 	Node* upd_sibling(Node* target, Node* replacement) { // xor is associative
@@ -29,7 +29,7 @@ struct Node {
 		return reinterpret_cast<Node*>(value);
 	}
 };
- 
+
 template<class T, class Allocator = std::allocator<T>>
 class XorList {
 	Node<T>* first = nullptr;
@@ -72,7 +72,7 @@ class XorList {
 			--*this;
 			return original;
 		}
-		reference operator*() const { 
+		reference operator*() const {
 			assert(node);
 			return node->data;
 		}
@@ -94,7 +94,7 @@ public:
 	using allocator_type = Allocator;
 	using size_type = size_t;
 	using difference_type = ptrdiff_t;
-	using reference = value_type; 
+	using reference = value_type;
 	using const_reference = const value_type&;
 	using pointer = typename std::allocator_traits<Allocator>::pointer;
 	using const_pointer = typename std::allocator_traits<Allocator>::const_pointer;
@@ -107,7 +107,7 @@ public:
 		std::move(init.begin(), init.end(), std::back_inserter(*this));
 	}
 	XorList(const XorList& other)
-       		: node_alloc(node_alloc_traits::select_on_container_copy_construction(other.node_alloc)) { 
+		: node_alloc(node_alloc_traits::select_on_container_copy_construction(other.node_alloc)) {
 		std::copy(other.begin(), other.end(), std::back_inserter(*this));
 	}
 	XorList(XorList&& other)
