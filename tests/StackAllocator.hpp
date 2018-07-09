@@ -5,41 +5,18 @@
 #include <utility>
 #include <algorithm>
 
-namespace std { enum class byte : unsigned char; }
-struct validate_byte {
-	// <cstddef> must be included in order for this check to work properly
-	template<
-		class T, T Val = std::declval<T>(),
-		class Op1 = decltype(Val <<= Val),
-		class Op2 = decltype(Val >>= Val),
-		class Op3 = decltype(Val << Val),
-		class Op4 = decltype(Val >> Val),
-		class Op5 = decltype(Val |= Val),
-		class Op6 = decltype(Val &= Val),
-		class Op7 = decltype(Val ^= Val),
-		class Op8 = decltype(Val | Val),
-		class Op9 = decltype(Val & Val),
-		class Op10 = decltype(Val ^ Val),
-		class Op11 = decltype(~Val)>
-	static std::true_type test(int);
-	template<class T>
-	static std::false_type test(...);
-	using type = std::conditional_t<decltype(test<std::byte>(0))::value, std::byte, unsigned char>;
-};
-using byte_t = typename validate_byte::type;
-
 struct Storage {
 	struct Chunk {
 		const std::unique_ptr<Chunk> pred;
-		const std::unique_ptr<byte_t[]> space;
+		const std::unique_ptr<std::byte[]> space;
 		size_t capacity;
-		byte_t* avail;
+		std::byte* avail;
 		Chunk(size_t size, std::unique_ptr<Chunk>&& pred)
 			: pred(std::move(pred))
-			, space(std::make_unique<byte_t[]>(size))
+			, space(std::make_unique<std::byte[]>(size))
 			, capacity(size)
 			, avail(space.get()) {}
-		byte_t* allocate(size_t amount) {
+		std::byte* allocate(size_t amount) {
 			if (amount > capacity) throw std::bad_alloc();
 			return capacity -= amount, std::exchange(avail, avail + amount);
 		}
@@ -48,7 +25,7 @@ struct Storage {
 	std::unique_ptr<Chunk> top_chunk = std::make_unique<Chunk>(chunk_size, nullptr);
 
 	Storage(size_t chunk_size) : chunk_size(chunk_size) {}
-	byte_t* allocate(size_t n, size_t type_size) try {
+	std::byte* allocate(size_t n, size_t type_size) try {
 		return top_chunk->allocate(n * type_size);
 	} catch (std::bad_alloc&) {
 		top_chunk = std::make_unique<Chunk>(chunk_size, std::move(top_chunk));

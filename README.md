@@ -5,7 +5,7 @@ XOR linked list: [wikipedia](https://en.wikipedia.org/wiki/XOR_linked_list).
 
 Aimed at a partial implementation of std::list as specified in [n4659](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4659.pdf).
 
-Theoretically speaking, it supports C++14, although tested against C++17.
+The minimum supported standard is C++17.
 
 CMakeLists.txt defines a XorList INTERFACE target.
 
