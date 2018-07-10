@@ -4,7 +4,6 @@
 #include <cassert>
 #include <algorithm>
 #include <utility>
-#include <cstddef>
 
 template<class It>
 struct is_input_iterator : std::is_base_of<std::input_iterator_tag, typename It::iterator_category> {};
@@ -20,7 +19,7 @@ struct Node {
 	explicit Node(U&& data, Node* left, Node* right)
 		: xor_(reinterpret_cast<uintptr_t>(left) ^ reinterpret_cast<uintptr_t>(right))
 		, data(std::forward<U>(data)) {}
-	Node* upd_sibling(Node* target, Node* replacement) { // xor is associative
+	Node* upd_sibling(Node* target, Node* replacement) { // xor is associative and involutive
 		xor_ ^= reinterpret_cast<uintptr_t>(target) ^ reinterpret_cast<uintptr_t>(replacement);
 		return this;
 	}
@@ -34,22 +33,22 @@ template<class T, class Allocator = std::allocator<T>>
 class XorList {
 	Node<T>* first = nullptr;
 	Node<T>* last = nullptr;
-	size_t size_ = 0;
+	std::size_t size_ = 0;
 	using node_alloc_t = typename std::allocator_traits<Allocator>::template rebind_traits<Node<T>>::allocator_type;
 	using node_alloc_traits = typename std::allocator_traits<node_alloc_t>;
-	node_alloc_t node_alloc;// = typename std::allocator_traits<Allocator>::template rebind_alloc<Node<T>>(alloc);
+	node_alloc_t node_alloc;
 	template<bool IsConst>
 	struct iterator_t {
 		using iterator_category = std::bidirectional_iterator_tag;
 		using value_type = std::conditional_t<IsConst, const T, T>;
-		using difference_type = ptrdiff_t;
+		using difference_type = std::ptrdiff_t;
 		using pointer = value_type*;
 		using reference = value_type&;
 
 		iterator_t() = default;
 		explicit iterator_t(Node<T>* me, Node<T>* prev) : node(me), prev_node(prev) {}
 		template<bool IsOtherConst, class = std::enable_if_t<IsConst || !IsOtherConst, int>>
-		iterator_t(const iterator_t<IsOtherConst>& other) : node(other.node) , prev_node(other.prev_node) {}
+		iterator_t(const iterator_t<IsOtherConst>& other) : node(other.node), prev_node(other.prev_node) {}
 		template<bool IsOtherConst>
 		bool operator==(const iterator_t<IsOtherConst>& it) const { return node == it.node; }
 		template<bool IsOtherConst>
@@ -59,7 +58,7 @@ class XorList {
 			return *this;
 		}
 		iterator_t operator++(int) {
-			const iterator_t original(node, prev_node);
+			const iterator_t original = *this;
 			++*this;
 			return original;
 		}
@@ -68,7 +67,7 @@ class XorList {
 			return *this;
 		}
 		iterator_t operator--(int) {
-			const iterator_t original(node, prev_node);
+			const iterator_t original = *this;
 			--*this;
 			return original;
 		}
@@ -83,7 +82,6 @@ class XorList {
 	private:
 		Node<T>* node = nullptr;
 		Node<T>* prev_node = nullptr;
-		template<bool> friend class iterator_t;
 	};
 public:
 	using iterator = iterator_t<false>;
@@ -92,8 +90,8 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using value_type = T;
 	using allocator_type = Allocator;
-	using size_type = size_t;
-	using difference_type = ptrdiff_t;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
 	using reference = value_type;
 	using const_reference = const value_type&;
 	using pointer = typename std::allocator_traits<Allocator>::pointer;
@@ -199,7 +197,7 @@ public:
 	}
 	void pop_back() { erase(std::prev(end())); }
 	void pop_front() { erase(begin()); }
-	void clear() { for (auto it = begin(); it != end(); ) it = erase(it); }
+	void clear() { for (auto it = begin(); it != end(); it = erase(it)) {} }
 	T& front() { return *begin(); }
 	T& back() { return *std::prev(end()); }
 	const T& front() const { return *begin(); }
@@ -216,5 +214,5 @@ public:
 	const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 	const_reverse_iterator crbegin() const { return rbegin(); }
 	const_reverse_iterator crend() const { return rend(); }
-	size_t size() const { return size_; }
+	std::size_t size() const { return size_; }
 };

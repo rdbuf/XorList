@@ -42,7 +42,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		COMMAND sh -c
 			"echo '[[ -z $LLVM_PROFILE_FILE ]] && export LLVM_PROFILE_FILE=default.profraw' >>coverage.sh"
 		COMMAND sh -c
-			"echo '[[ ! -f $LLVM_PROFILE_FILE ]] && echo Run binary first && exit 1 || llvm-profdata merge -sparse $LLVM_PROFILE_FILE -o $<TARGET_FILE_DIR:run>/tests.profdata' >>coverage.sh"
+			"echo '[[ ! -f $LLVM_PROFILE_FILE ]] && echo Run the binary first && exit 1 || llvm-profdata merge -sparse $LLVM_PROFILE_FILE -o $<TARGET_FILE_DIR:run>/tests.profdata' >>coverage.sh"
 		COMMAND sh -c
 			"echo llvm-cov show -show-line-counts-or-regions -Xdemangler c++filt -instr-profile=$<TARGET_FILE_DIR:run>/tests.profdata $<TARGET_FILE:run> ${XORLIST_INCLUDE_HEADERS} >>coverage.sh"
 		COMMAND sh -c

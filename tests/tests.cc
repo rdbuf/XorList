@@ -9,6 +9,7 @@
 #include <iterator>
 #include <random>
 
+// to build manually:
 // clang++ -std=c++17 -I../include tests.cc -lgtest -lpthread -lgtest_main
 
 namespace ignore_access_rights {
@@ -261,7 +262,7 @@ TEST(XorList, OperationalCorrectness) {
 	std::mt19937 gen((std::random_device()()));
 	uniform_int_distribution<> op(0, 4);
 	uniform_int_distribution<> value;
-	const size_t test_length = uniform_int_distribution<>(1e4, 1e4 * 2)(gen);
+	const std::size_t test_length = uniform_int_distribution<>(1e4, 1e4 * 2)(gen);
 
 	XorList<int, StackAllocator<int>> l;
 	std::list<int> k;
