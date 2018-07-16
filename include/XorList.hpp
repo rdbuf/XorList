@@ -6,9 +6,7 @@
 #include <utility>
 
 template<class It>
-struct is_input_iterator : std::is_base_of<std::input_iterator_tag, typename It::iterator_category> {};
-template<class It>
-using is_input_iterator_t = is_input_iterator<It>;
+constexpr bool is_input_iterator_v = std::is_base_of<std::input_iterator_tag, typename It::iterator_category>::value;
 
 template <class T>
 struct Node {
@@ -151,7 +149,7 @@ public:
 		other.size_ = 0;
 		other.first = other.last = nullptr;
 	}
-	template<class U, class InputIterator, class = std::enable_if_t<is_input_iterator_t<InputIterator>::value>>
+	template<class U, class InputIterator, class = std::enable_if_t<is_input_iterator_v<InputIterator>>>
 	iterator insert(InputIterator it, U&& value) {
 		Node<T>* const node = node_alloc_traits::allocate(node_alloc, 1);
 		node_alloc_traits::construct(
@@ -163,7 +161,7 @@ public:
 		++size_;
 		return iterator(node, node->get_complement(it.get_node()));
 	}
-	template<class InputIterator, class = std::enable_if_t<is_input_iterator_t<InputIterator>::value>>
+	template<class InputIterator, class = std::enable_if_t<is_input_iterator_v<InputIterator>>>
 	void assign(InputIterator beg_in, InputIterator end_in) {
 		iterator out = begin();
 		InputIterator in = beg_in;
